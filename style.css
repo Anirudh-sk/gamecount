@@ -147,9 +147,106 @@ footer {
   }
 }
 @media (max-width: 767.98px) {
-  #playersGrid .col-6 {
-    flex: 0 0 auto;
-    width: 50%;
-    max-width: 50%;
+  #addPlayerForm input {
+    width: 100%;
+    font-size: 1rem;
   }
+  #addPlayerForm button {
+    width: 100%;
+    font-size: 1rem;
+  }
+  .player-btn {
+    font-size: 1rem;
+    min-height: 70px;
+  }
+  .team-combo-btn {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+  }
+  .ultra-modern-tab {
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+  }
+  .ultra-modern-heading {
+    font-size: 1.5rem;
+  }
+  .card .badge {
+    font-size: 0.85rem;
+  }
+  #playersGrid .col-6 {
+    width: 100%;
+    max-width: 100%;
+  }
+  .ultra-modern-tab-content {
+    padding: 1rem 0.5rem;
+  }
+}
+.ultra-modern-tabs {
+  background: rgba(35,41,70,0.95);
+  border-radius: 2rem;
+  box-shadow: 0 4px 24px rgba(30,41,59,0.18);
+  padding: 0.5rem 0.5rem 0 0.5rem;
+  border: none;
+}
+.ultra-modern-tab {
+  border: none !important;
+  border-radius: 2rem 2rem 0 0 !important;
+  background: none !important;
+  color: #a5b4fc !important;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: background 0.2s, color 0.2s;
+  margin: 0 0.2rem;
+  padding: 0.7rem 2rem 0.7rem 2rem;
+  position: relative;
+}
+.ultra-modern-tab.active, .ultra-modern-tab:focus, .ultra-modern-tab:hover {
+  background: linear-gradient(120deg, #3b82f6 0%, #6366f1 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+}
+.ultra-modern-tab-content {
+  background: rgba(35,41,70,0.95);
+  border-radius: 2rem;
+  box-shadow: 0 4px 24px rgba(30,41,59,0.18);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  margin-bottom: 2rem;
+}
+.ultra-modern-heading {
+  color: #a5b4fc;
+  letter-spacing: 1px;
+  font-size: 2rem;
+  text-shadow: 0 2px 8px rgba(99,102,241,0.13);
+}
+.team-combo-btn {
+  border-radius: 1.5rem;
+  font-weight: 600;
+  background: linear-gradient(120deg, #232946 0%, #31364a 100%);
+  color: #a5b4fc;
+  border: 2px solid #6366f1;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  padding: 0.5rem 1.2rem;
+  margin: 0.2rem 0.2rem;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+}
+.team-combo-btn.active, .team-combo-btn:focus, .team-combo-btn:hover {
+  background: linear-gradient(120deg, #6366f1 0%, #3b82f6 100%);
+  color: #fff;
+  border: 2px solid #3b82f6;
+}
+.card.bg-dark {
+  background: linear-gradient(120deg, #232946 0%, #31364a 100%) !important;
+  color: #e0e6f0;
+  border-radius: 1.5rem;
+}
+.card .badge {
+  font-size: 1rem;
+  margin-top: 0.2rem;
+}
+.list-group-item.bg-dark {
+  background: linear-gradient(120deg, #232946 0%, #31364a 100%) !important;
+  color: #e0e6f0;
+  border-radius: 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
 }

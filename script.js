@@ -157,7 +157,263 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   clearCountsBtn.addEventListener('click', clearCounts);
-  clearAllBtn.addEventListener('click', clearAll);
+  clearAllBtn.addEventListener('click', function() {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(MATCH_STORAGE_KEY);
+    localStorage.removeItem(TEAM_STORAGE_KEY);
+    renderPlayers();
+    renderTeamSection();
+    renderSummarySection();
+  });
+  document.getElementById('clearMatches').addEventListener('click', function() {
+    localStorage.removeItem(MATCH_STORAGE_KEY);
+    renderTeamSection();
+    renderSummarySection();
+  });
+  document.getElementById('clearTeams').addEventListener('click', function() {
+    localStorage.removeItem(TEAM_STORAGE_KEY);
+    renderTeamSection();
+    renderSummarySection();
+  });
+
+  // --- TEAM MODE LOGIC ---
+  // Local Storage Key for teams and matches
+  const TEAM_STORAGE_KEY = 'gameCountTeams';
+  const MATCH_STORAGE_KEY = 'gameCountMatches';
+  
+  // Generate all possible 2-player team combinations from players
+  function generateTeams(players) {
+    const teams = [];
+    const seen = new Set();
+    for (let i = 0; i < players.length; i++) {
+      for (let j = i + 1; j < players.length; j++) {
+        // Sort names to ensure uniqueness (p1,p2 same as p2,p1)
+        const combo = [players[i].name, players[j].name].sort().join('|');
+        if (!seen.has(combo)) {
+          teams.push({ players: [players[i].name, players[j].name], wins: 0 });
+          seen.add(combo);
+        }
+      }
+    }
+    return teams;
+  }
+  
+  // Load teams from localStorage (deprecated, now generated dynamically)
+  function loadTeams() {
+    const players = loadPlayers();
+    return generateTeams(players);
+  }
+  
+  // Save teams to localStorage (no longer used)
+  function saveTeams(teams) {
+    // No-op
+  }
+  
+  // Load matches from localStorage
+  function loadMatches() {
+    try {
+      const data = localStorage.getItem(MATCH_STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  
+  // Save matches to localStorage
+  function saveMatches(matches) {
+    localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(matches));
+  }
+  
+  // Render Team Section
+  function renderTeamSection() {
+    const teamSection = document.getElementById('teamSection');
+    teamSection.innerHTML = '';
+    const players = loadPlayers();
+    const teams = generateTeams(players);
+    // Team list UI
+    const teamList = document.createElement('div');
+    teamList.className = 'mb-4 d-flex flex-wrap gap-2';
+    if (teams.length === 0) {
+      teamList.innerHTML = '<div>Add at least 2 players to create teams.</div>';
+    } else {
+      teams.forEach((team, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-outline-primary mb-2 team-combo-btn';
+        btn.textContent = team.players.join(' & ');
+        btn.setAttribute('data-team-idx', idx);
+        btn.onclick = function() {
+          selectTeamForMatch(idx);
+        };
+        teamList.appendChild(btn);
+      });
+    }
+    teamSection.appendChild(teamList);
+    // Match selection UI
+    if (teams.length >= 2) {
+      const matchDiv = document.createElement('div');
+      matchDiv.className = 'mb-3';
+      matchDiv.innerHTML = '<div class="fw-bold mb-2">Select two teams and record match:</div>';
+      let selectedTeams = [];
+      window.selectTeamForMatch = function(idx) {
+        if (selectedTeams.length < 2 && !selectedTeams.includes(idx)) {
+          selectedTeams.push(idx);
+          document.querySelectorAll('.team-combo-btn')[idx].classList.add('active');
+          // Hide teams with overlapping players
+          const selectedPlayers = new Set();
+          selectedTeams.forEach(selIdx => {
+            teams[selIdx].players.forEach(p => selectedPlayers.add(p));
+          });
+          document.querySelectorAll('.team-combo-btn').forEach((btn, i) => {
+            if (
+              selectedTeams.includes(i) ||
+              teams[i].players.some(p => selectedPlayers.has(p))
+            ) {
+              btn.style.display = selectedTeams.includes(i) ? '' : 'none';
+            } else {
+              btn.style.display = '';
+            }
+          });
+        }
+        if (selectedTeams.length === 2) {
+          showMatchScoreForm(selectedTeams[0], selectedTeams[1]);
+        }
+      };
+      function showMatchScoreForm(idx1, idx2) {
+        const t1 = teams[idx1];
+        const t2 = teams[idx2];
+        const form = document.createElement('form');
+        form.className = 'd-flex flex-wrap gap-2 align-items-end mt-3';
+        form.innerHTML = `
+          <span class="badge bg-primary">${escapeHtml(t1.players.join(' & '))}</span>
+          <input type="number" min="0" required class="form-control score-input" style="width:100px;max-width:120px;font-size:1.2rem;" placeholder="Score" id="score1" autocomplete="off">
+          <span class="mx-2">vs</span>
+          <span class="badge bg-primary">${escapeHtml(t2.players.join(' & '))}</span>
+          <input type="number" min="0" required class="form-control score-input" style="width:100px;max-width:120px;font-size:1.2rem;" placeholder="Score" id="score2" autocomplete="off">
+          <button type="submit" class="btn btn-success">Record Match</button>
+          <button type="button" class="btn btn-secondary" id="cancelMatch">Cancel</button>
+        `;
+        form.onsubmit = function(e) {
+          e.preventDefault();
+          const score1 = parseInt(form.querySelector('#score1').value);
+          const score2 = parseInt(form.querySelector('#score2').value);
+          if (isNaN(score1) || isNaN(score2) || score1 === score2) return;
+          let matches = loadMatches();
+          const winner = score1 > score2 ? 1 : 2;
+          matches.push({ team1: idx1, team2: idx2, winner, score1, score2 });
+          saveMatches(matches);
+          // Increment individual counts for all players in both teams
+          let playersArr = loadPlayers();
+          t1.players.concat(t2.players).forEach(name => {
+            const idx = playersArr.findIndex(p => p.name === name);
+            if (idx !== -1) playersArr[idx].count += 1;
+          });
+          savePlayers(playersArr);
+          renderPlayers();
+          renderTeamSection();
+          renderSummarySection();
+        };
+        form.querySelector('#cancelMatch').onclick = function() {
+          selectedTeams = [];
+          document.querySelectorAll('.team-combo-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.display = '';
+          });
+          renderTeamSection();
+        };
+        matchDiv.appendChild(form);
+      }
+      teamSection.appendChild(matchDiv);
+    }
+    // Match history
+    const matches = loadMatches();
+    if (matches.length > 0) {
+      const matchHistory = document.createElement('div');
+      matchHistory.className = 'mt-4';
+      matchHistory.innerHTML = '<div class="fw-bold mb-2">Match History:</div>' + matches.map(m => {
+        const t1 = teams[m.team1]?.players.join(' & ') || 'Team 1';
+        const t2 = teams[m.team2]?.players.join(' & ') || 'Team 2';
+        const winner = m.winner === 1 ? t1 : t2;
+        const loser = m.winner === 1 ? t2 : t1;
+        const winScore = m.winner === 1 ? m.score1 : m.score2;
+        const loseScore = m.winner === 1 ? m.score2 : m.score1;
+        return `<div class="mb-1"><span class="badge bg-secondary me-2">${escapeHtml(t1)}</span> vs <span class="badge bg-secondary me-2">${escapeHtml(t2)}</span> <span class="badge bg-success">Winner: ${escapeHtml(winner)} (${winScore}-${loseScore})</span></div>`;
+      }).join('');
+      teamSection.appendChild(matchHistory);
+    }
+  }
+
+  // --- SUMMARY TAB LOGIC ---
+  function renderSummarySection() {
+    const summarySection = document.getElementById('summarySection');
+    summarySection.innerHTML = '';
+    const players = loadPlayers();
+    const teams = generateTeams(players);
+    const matches = loadMatches();
+  
+    // Player-wise summary
+    const indivStats = document.createElement('div');
+    indivStats.className = 'mb-4';
+    indivStats.innerHTML = '<h5 class="mb-3">Player Stats</h5>' +
+      '<div class="row g-2">' +
+      players.map(p => {
+        // Team wins for this player
+        let teamWins = 0;
+        let teamGames = 0;
+        teams.forEach((t, i) => {
+          if (t.players.includes(p.name)) {
+            teamGames += matches.filter(m => m.team1 === i || m.team2 === i).length;
+            teamWins += matches.filter(m => (m.team1 === i && m.winner === 1) || (m.team2 === i && m.winner === 2)).length;
+          }
+        });
+        return `<div class=\"col-12 col-md-6 col-lg-4\"><div class=\"card bg-dark border-0 shadow-sm mb-2\"><div class=\"card-body\"><strong>${escapeHtml(p.name)}</strong><br>Games Played: <span class=\"badge bg-info\">${p.count}</span><br>Team Games: <span class=\"badge bg-secondary\">${teamGames}</span><br>Team Wins: <span class=\"badge bg-success\">${teamWins}</span></div></div></div>`;
+      }).join('') + '</div>';
+    summarySection.appendChild(indivStats);
+  
+    // Team-wise summary
+    if (teams.length > 0) {
+      const teamStats = document.createElement('div');
+      teamStats.className = 'mb-4';
+      teamStats.innerHTML = '<h5 class="mb-3">Team Stats</h5>' +
+        '<div class="row g-2">' +
+        teams.map((t, i) => {
+          const played = matches.filter(m => m.team1 === i || m.team2 === i).length;
+          const wins = matches.filter(m => (m.team1 === i && m.winner === 1) || (m.team2 === i && m.winner === 2)).length;
+          if (played === 0) return '';
+          return `<div class=\"col-12 col-md-6 col-lg-4\"><div class=\"card bg-dark border-0 shadow-sm mb-2\"><div class=\"card-body\"><strong>${escapeHtml(t.players.join(' & '))}</strong><br>Games Played: <span class=\"badge bg-info\">${played}</span><br>Wins: <span class=\"badge bg-success\">${wins}</span></div></div></div>`;
+        }).join('') + '</div>';
+      summarySection.appendChild(teamStats);
+    }
+  
+    // Match-wise summary
+    if (matches.length > 0) {
+      const matchStats = document.createElement('div');
+      matchStats.className = 'mb-4';
+      matchStats.innerHTML = '<h5 class="mb-3">Match History</h5>' +
+        '<div class="list-group">' +
+        matches.map(m => {
+          const t1 = teams[m.team1]?.players.join(' & ') || 'Team 1';
+          const t2 = teams[m.team2]?.players.join(' & ') || 'Team 2';
+          const winner = m.winner === 1 ? t1 : t2;
+          const loser = m.winner === 1 ? t2 : t1;
+          const winScore = m.winner === 1 ? m.score1 : m.score2;
+          const loseScore = m.winner === 1 ? m.score2 : m.score1;
+          return `<div class=\"list-group-item bg-dark border-0 mb-1\"><span class=\"badge bg-secondary me-2\">${escapeHtml(t1)}</span> vs <span class=\"badge bg-secondary me-2\">${escapeHtml(t2)}</span> <span class=\"badge bg-success\">Winner: ${escapeHtml(winner)} (${winScore}-${loseScore})</span> <span class=\"badge bg-danger ms-2\">Loser: ${escapeHtml(loser)} (${loseScore})</span></div>`;
+        }).join('') + '</div>';
+      summarySection.appendChild(matchStats);
+    }
+  }
+
+  // --- TAB HANDLING ---
+  // Render correct section on tab change
+  document.getElementById('individual-tab').addEventListener('click', function() {
+    renderPlayers();
+  });
+  document.getElementById('team-tab').addEventListener('click', function() {
+    renderTeamSection();
+  });
+  document.getElementById('summary-tab').addEventListener('click', function() {
+    renderSummarySection();
+  });
 
   // Initial render
   renderPlayers();

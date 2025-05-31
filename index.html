@@ -81,26 +81,48 @@
 </head>
 <body>
   <div class="container py-5">
-    <h1 class="mb-4 text-center fw-bold animate__animated animate__fadeInDown">Game Count</h1>
-    <p class="lead text-center mb-3 animate__animated animate__fadeIn">Track games played by each player.</p>
-    <p class="text-center text-muted mb-4 animate__animated animate__fadeIn">
-      Game Count helps ensure fair play by tracking how many games each player has played. Whether you're on a badminton court or football field, this tool helps balance player time and improve session transparency.
-    </p>
-
-    <form id="addPlayerForm" class="d-flex justify-content-center mb-4 gap-2 animate__animated animate__fadeInUp">
-      <input type="text" id="playerName" class="form-control form-control-lg" placeholder="Enter player name" maxlength="20" required>
-      <button type="submit" class="btn btn-primary btn-lg">Add Player</button>
-    </form>
-
-    <div class="d-flex justify-content-center gap-2 mb-4 animate__animated animate__fadeInUp">
-      <button id="clearCounts" class="btn btn-warning">Clear Counts</button>
-      <button id="clearAll" class="btn btn-danger">Remove All</button>
+    <ul class="nav nav-tabs mb-4 justify-content-center ultra-modern-tabs" id="gameTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active ultra-modern-tab" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual" type="button" role="tab" aria-controls="individual" aria-selected="true"><i class="bi bi-person"></i> Individual</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link ultra-modern-tab" id="team-tab" data-bs-toggle="tab" data-bs-target="#team" type="button" role="tab" aria-controls="team" aria-selected="false"><i class="bi bi-people"></i> Team</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link ultra-modern-tab" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab" aria-controls="summary" aria-selected="false"><i class="bi bi-bar-chart"></i> Summary</button>
+      </li>
+    </ul>
+    <div class="tab-content ultra-modern-tab-content" id="gameTabsContent">
+      <div class="tab-pane fade show active" id="individual" role="tabpanel" aria-labelledby="individual-tab">
+        <h1 class="mb-4 text-center fw-bold animate__animated animate__fadeInDown">Game Count</h1>
+        <p class="lead text-center mb-3 animate__animated animate__fadeIn">Track games played by each player.</p>
+        <p class="text-center mb-4 animate__animated animate__fadeIn">
+          Game Count helps ensure fair play by tracking how many games each player has played. Whether you're on a badminton court or pickle ball court, this tool helps balance player time and improve session transparency.
+        </p>
+        <form id="addPlayerForm" class="d-flex justify-content-center mb-4 gap-2 animate__animated animate__fadeInUp">
+          <input type="text" id="playerName" class="form-control form-control-lg" placeholder="Enter player name" maxlength="20" required>
+          <button type="submit" class="btn btn-primary btn-lg">Add Player</button>
+        </form>
+        <div class="d-flex justify-content-center gap-2 mb-4 animate__animated animate__fadeInUp">
+          <button id="clearCounts" class="btn btn-warning">Clear Counts</button>
+          <button id="clearAll" class="btn btn-danger">Remove All</button>
+          <button id="clearMatches" class="btn btn-danger ms-2">Clear Match History</button>
+          <button id="clearTeams" class="btn btn-danger ms-2">Clear Teams</button>
+        </div>
+        <div id="playersGrid" class="row g-3 animate__animated animate__fadeIn"></div>
+      </div>
+      <div class="tab-pane fade" id="team" role="tabpanel" aria-labelledby="team-tab">
+        <h2 class="mb-4 text-center fw-bold ultra-modern-heading">Team Mode</h2>
+        <div id="teamSection"></div>
+      </div>
+      <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
+        <h2 class="mb-4 text-center fw-bold ultra-modern-heading">Summary</h2>
+        <div id="summarySection"></div>
+      </div>
     </div>
-
-    <div id="playersGrid" class="row g-3 animate__animated animate__fadeIn"></div>
   </div>
 
-  <footer class="text-center py-4 small text-muted animate__animated animate__fadeInUp">
+  <footer class="text-center py-4 small  animate__animated animate__fadeInUp">
     &copy; 2024 Game Count. All rights reserved.
   </footer>
 
