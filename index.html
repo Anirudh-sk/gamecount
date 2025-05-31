@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Game Count is a modern online game counter for badminton, table tennis, football, and all sports. Track games per player, ensure fair play, and manage sessions. Ideal for sports academies, clubs, and casual players.">
+  <meta name="keywords" content="game counter, sports tally, badminton counter, table tennis score tracker, football game tracker, player tally system, fair play tool, session counter, sports slot tracker, sports management tool">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Game Count">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Game Count - Modern Game Tally Counter">
+  <meta property="og:description" content="Track games played by each player. Works for badminton, football, and all sports. Responsive, animated, and SEO-optimized.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourdomain.com/">
+  <meta property="og:image" content="https://yourdomain.com/og-image.svg">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Game Count - Equal Game Tally for All Players">
+  <meta name="twitter:description" content="Track the number of games played by each player. Works for badminton, football, and all sports.">
+  <meta name="twitter:image" content="https://yourdomain.com/og-image.svg">
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" href="favicon.ico">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://yourdomain.com/">
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <title>Game Count - Modern Game Tally Counter</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Structured Data: Web App -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Game Count",
+      "description": "Ultra-modern tally counter for games. Track and balance play sessions for any sport.",
+      "applicationCategory": "SportsApplication",
+      "operatingSystem": "All",
+      "inLanguage": "en",
+      "url": "https://yourdomain.com/"
+    }
+  </script>
+
+  <!-- Structured Data: FAQ -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Game Count?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Game Count is an online tally counter for tracking how many games each player has played across any sport like badminton, football, or table tennis."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who can use Game Count?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Anyone! It’s ideal for sports academies, coaches, players, or friends wanting fair play while booking slots."
+          }
+        }
+      ]
+    }
+  </script>
+</head>
+<body>
+  <div class="container py-5">
+    <h1 class="mb-4 text-center fw-bold animate__animated animate__fadeInDown">Game Count</h1>
+    <p class="lead text-center mb-3 animate__animated animate__fadeIn">Track games played by each player.</p>
+    <p class="text-center text-muted mb-4 animate__animated animate__fadeIn">
+      Game Count helps ensure fair play by tracking how many games each player has played. Whether you're on a badminton court or football field, this tool helps balance player time and improve session transparency.
+    </p>
+
+    <form id="addPlayerForm" class="d-flex justify-content-center mb-4 gap-2 animate__animated animate__fadeInUp">
+      <input type="text" id="playerName" class="form-control form-control-lg" placeholder="Enter player name" maxlength="20" required>
+      <button type="submit" class="btn btn-primary btn-lg">Add Player</button>
+    </form>
+
+    <div class="d-flex justify-content-center gap-2 mb-4 animate__animated animate__fadeInUp">
+      <button id="clearCounts" class="btn btn-warning">Clear Counts</button>
+      <button id="clearAll" class="btn btn-danger">Remove All</button>
+    </div>
+
+    <div id="playersGrid" class="row g-3 animate__animated animate__fadeIn"></div>
+  </div>
+
+  <footer class="text-center py-4 small text-muted animate__animated animate__fadeInUp">
+    &copy; 2024 Game Count. All rights reserved.
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
