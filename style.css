@@ -679,35 +679,13 @@ body {
 
 .footer-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
 }
 
-.footer-info {
-  color: var(--text-accent);
-  font-size: 0.9rem;
-}
 
-.footer-links {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.footer-link {
-  background: none;
-  border: none;
-  color: var(--text-accent);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.footer-link:hover {
-  color: var(--accent-blue);
-}
 
 /* Toast Styles */
 .toast {
